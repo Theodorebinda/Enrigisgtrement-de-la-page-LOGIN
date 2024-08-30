@@ -23,8 +23,8 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.set("view engine", "html");
-app.set("views", path.join(__dirname, "views"));
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 // Middleware pour vérifier si l'utilisateur est connecté
 const requireAuth = (req, res, next) => {
