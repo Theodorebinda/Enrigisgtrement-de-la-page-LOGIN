@@ -52,18 +52,18 @@ app.post("/", async (req, res) => {
       const user = await prisma.user.findFirst({ where: { email } });
       if (user && await bcrypt.compare(password, user.password)) {
         req.session.userId = user.id;
-        return res.redirect("/cong2");
+        return res.json({ success: true, redirectUrl: "/cong2" });
       }
-      res.status(401).send("Email ou mot de passe incorrect.");
+      res.status(401).json({ success: false, message: "Email ou mot de passe incorrect." });
     } catch (error) {
-      res.status(500).send("Une erreur est survenue.");
+      res.status(500).json({ success: false, message: "Une erreur est survenue." });
       console.error(error);
     }
   }
 });
 
-app.get("/sgnup", (req, res) => {
-  res.render("sgnup");
+app.get("/signup", (req, res) => {
+  res.render("signup");
 });
 
 app.post("/signup", async (req, res) => {
@@ -116,6 +116,16 @@ app.get("/cong2", requireAuth, (req, res) => {
 
 app.get("/for", (req, res) => {
   res.render("for");
+});
+
+// Route pour la déconnexion
+app.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).send("Une erreur est survenue lors de la déconnexion.");
+    }
+    res.redirect("/");
+  });
 });
 
 app.listen(4001, () => {

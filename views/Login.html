@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="signin">
-        <form action="/" method="post">
+        <form id="loginForm">
             <h2 style="color: white">Log In</h2>
             <input type="email" name="email" placeholder="Email address" required>
             <input type="password" name="password" placeholder="Password" required><br><br>
@@ -20,8 +20,37 @@
                 <a href="re" style="margin-right: 0px; font-size: 15px; font-family: Tahoma, Geneva, sans-serif;">Reset password</a>
                 <a href="for" style="margin-right: 0px; font-size: 15px; font-family: Tahoma, Geneva, sans-serif;">Forgot password</a>
             </div><br><br><br><br><br>
-            Don't have an account? <a href="sgnup" style="font-family: 'Play', sans-serif;"> Sign Up</a>
+            Don't have an account? <a href="signup" style="font-family: 'Play', sans-serif;"> Sign Up</a>
         </form>
+        <div id="errorMessage" style="color: red; display: none;"></div>
     </div>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch("/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    window.location.href = result.redirectUrl;
+                } else {
+                    const errorMessage = document.getElementById("errorMessage");
+                    errorMessage.textContent = result.message;
+                    errorMessage.style.display = "block";
+                }
+            } catch (error) {
+                console.error("Erreur lors de la soumission du formulaire :", error);
+            }
+        });
+    </script>
 </body>
 </html>
